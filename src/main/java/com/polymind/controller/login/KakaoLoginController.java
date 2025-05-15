@@ -22,7 +22,7 @@ public class KakaoLoginController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponseEntity<?>> login(@RequestBody KakaoRequest request) throws IOException, InterruptedException {
 
-        KakaoResult result = kakaoLoginService.getKakaoToken(request);
+        KakaoResult result = kakaoLoginService.getKakaoTokenLogin(request);
 
         return ResponseEntity.ok(
                 ApiResponseEntity.builder()

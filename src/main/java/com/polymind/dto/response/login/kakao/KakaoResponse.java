@@ -1,4 +1,4 @@
-package com.polymind.dto.response.login;
+package com.polymind.dto.response.login.kakao;
 
 import lombok.Data;
 
@@ -10,4 +10,6 @@ public class KakaoResponse {
     private String refresh_token;
     private int refresh_token_expires_in;
     private String scope;
+    private KakaoUser user;
 }
+
