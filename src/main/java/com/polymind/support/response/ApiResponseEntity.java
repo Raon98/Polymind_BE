@@ -1,4 +1,4 @@
-package com.polymind.support.utils;
+package com.polymind.support.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

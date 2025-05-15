@@ -1,4 +1,4 @@
-package com.polymind.dto.req.login;
+package com.polymind.dto.request.login;
 
 import lombok.Data;
 
