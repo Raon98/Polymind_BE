@@ -1,7 +1,6 @@
 package com.polymind.controller.login;
 
 import com.polymind.dto.request.login.KakaoRequest;
-import com.polymind.dto.response.login.KakaoResponse;
 import com.polymind.service.login.KakaoLoginService;
 import com.polymind.support.response.ApiResponseEntity;
 import com.polymind.support.response.KakaoResult;
