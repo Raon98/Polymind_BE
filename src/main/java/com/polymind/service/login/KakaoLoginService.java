@@ -5,6 +5,7 @@ import com.polymind.dto.response.login.kakao.KakaoErrorResponse;
 import com.polymind.dto.response.login.kakao.KakaoResponse;
 import com.polymind.dto.response.login.kakao.KakaoUser;
 import com.polymind.support.config.login.KakaoAuthProperties;
+import com.polymind.support.logging.Log;
 import com.polymind.support.response.KakaoResult;
 import com.polymind.support.utils.HttpClientUtils;
 import com.polymind.support.utils.ObjectMapperUtils;
@@ -19,7 +20,6 @@ import java.util.Map;
 @Service
 public class KakaoLoginService {
     private final KakaoAuthProperties kakaoAuthProperties;
-
     /**
      * 카카오 토큰 발급
      * @param kakaoRequest
@@ -29,6 +29,7 @@ public class KakaoLoginService {
      */
 
     public KakaoResult getKakaoTokenLogin(KakaoRequest kakaoRequest) throws IOException, InterruptedException {
+        Log.info("[START] ::::::: [getKakaoTokenLogin]");
         String tokenUrl = kakaoAuthProperties.tokenUrl();
         String clientId = kakaoAuthProperties.clientId();
         String redirectUri = kakaoAuthProperties.redirectUri();
@@ -43,10 +44,12 @@ public class KakaoLoginService {
         KakaoResult kakaoResult = new KakaoResult();
 
         HttpResponse<String> httpTokenResponse = HttpClientUtils.sendPostForm(tokenUrl,params);
+        Log.info("[getKakaoTokenLogin : httpTokenResponse : {}]",httpTokenResponse);
         if(httpTokenResponse.statusCode() == 200){
             KakaoResponse tokenResponse = ObjectMapperUtils.readValue(httpTokenResponse.body(),KakaoResponse.class);
 
             HttpResponse<String> httpUserResponse = HttpClientUtils.sendAuthorization(userUrl,tokenResponse.getAccess_token());
+            Log.info("[getKakaoTokenLogin : httpUserResponse : {}]",httpUserResponse);
             if(httpUserResponse.statusCode() == 200){
                 KakaoUser userResponse = ObjectMapperUtils.readValue(httpUserResponse.body(),KakaoUser.class);
                 tokenResponse.setUser(userResponse);
