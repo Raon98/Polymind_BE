@@ -14,7 +14,6 @@ import com.polymind.support.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
@@ -26,12 +25,10 @@ public class KakaoLoginService implements OAuthLoginService {
     /**
      * 카카오 토큰 발급
      * @param kakaoRequest
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
+     * @return OAuthLoginResult
      */
 
-    public OAuthLoginResult LoginProcess(OAuthLoginRequest kakaoRequest) throws IOException, InterruptedException {
+    public OAuthLoginResult LoginProcess(OAuthLoginRequest kakaoRequest) {
         Log.info("[START] ::::::: [LoginProcess : kakao]");
         String tokenUrl = kakaoAuthProperties.tokenUrl();
         String clientId = kakaoAuthProperties.clientId();
@@ -46,37 +43,40 @@ public class KakaoLoginService implements OAuthLoginService {
         );
 
         OAuthLoginResult oAuthLoginResult = new OAuthLoginResult();
+        try {
+            HttpResponse<String> httpTokenResponse = HttpClientUtils.sendPostForm(tokenUrl,params);
+            Log.info("[LoginProcess : kakao : httpTokenResponse : {}]",httpTokenResponse);
+            if(httpTokenResponse.statusCode() == 200){
+                KakaoResponse tokenResponse = ObjectMapperUtils.readValue(httpTokenResponse.body(),KakaoResponse.class);
 
-        HttpResponse<String> httpTokenResponse = HttpClientUtils.sendPostForm(tokenUrl,params);
-        Log.info("[LoginProcess : kakao : httpTokenResponse : {}]",httpTokenResponse);
-        if(httpTokenResponse.statusCode() == 200){
-            KakaoResponse tokenResponse = ObjectMapperUtils.readValue(httpTokenResponse.body(),KakaoResponse.class);
+                HttpResponse<String> httpUserResponse = HttpClientUtils.sendAuthorization(userUrl,tokenResponse.getAccess_token());
+                Log.info("[LoginProcess : kakao : httpUserResponse : {}]",httpUserResponse);
+                if(httpUserResponse.statusCode() == 200){
+                    KakaoUser userResponse = ObjectMapperUtils.readValue(httpUserResponse.body(),KakaoUser.class);
 
-            HttpResponse<String> httpUserResponse = HttpClientUtils.sendAuthorization(userUrl,tokenResponse.getAccess_token());
-            Log.info("[LoginProcess : kakao : httpUserResponse : {}]",httpUserResponse);
-            if(httpUserResponse.statusCode() == 200){
-                KakaoUser userResponse = ObjectMapperUtils.readValue(httpUserResponse.body(),KakaoUser.class);
+                    User user = userService.saveIfNotExists(userResponse.getId(),"",userResponse.getProperties().getName(),"kakao",userResponse.getProperties().getProfileImage());
+                    if(user != null){
+                        oAuthLoginResult.setSuccess(true);
+                        oAuthLoginResult.setUser(user);
+                        oAuthLoginResult.setAccess_token(tokenResponse.getAccess_token());
+                        oAuthLoginResult.setRefresh_token(tokenResponse.getRefresh_token());
+                        oAuthLoginResult.setExpires_in(tokenResponse.getExpires_in());
+                        oAuthLoginResult.setRefresh_token_expires_in(tokenResponse.getRefresh_token_expires_in());
+                        oAuthLoginResult.setToken_type(tokenResponse.getToken_type());
 
-                User user = userService.saveIfNotExists(userResponse.getId(),"",userResponse.getProperties().getName(),"kakao",userResponse.getProperties().getProfileImage());
-                if(user != null){
-                    oAuthLoginResult.setSuccess(true);
-                    oAuthLoginResult.setUser(user);
-                    oAuthLoginResult.setAccess_token(tokenResponse.getAccess_token());
-                    oAuthLoginResult.setRefresh_token(tokenResponse.getRefresh_token());
-                    oAuthLoginResult.setExpires_in(tokenResponse.getExpires_in());
-                    oAuthLoginResult.setRefresh_token_expires_in(tokenResponse.getRefresh_token_expires_in());
-                    oAuthLoginResult.setToken_type(tokenResponse.getToken_type());
-
-                    Log.info("[LoginProcess : kakao : 카카오 로그인 성공 : {}]",oAuthLoginResult);
+                        Log.info("[LoginProcess : kakao : 카카오 로그인 성공 : {}]",oAuthLoginResult);
+                    }
+                }else {
+                    throw new RuntimeException("카카오 사용자 정보 조회 실패: " + httpUserResponse.body());
                 }
-            }else {
-                throw new RuntimeException("카카오 사용자 정보 조회 실패: " + httpUserResponse.body());
+            }else{
+                OAuthErrorResponse error = ObjectMapperUtils.readValue(httpTokenResponse.body(),OAuthErrorResponse.class);
+                oAuthLoginResult.setSuccess(false);
+                oAuthLoginResult.setError(error);
+                throw new RuntimeException("카카오 토큰 발급 실패: " + httpTokenResponse.body());
             }
-        }else{
-            OAuthErrorResponse error = ObjectMapperUtils.readValue(httpTokenResponse.body(),OAuthErrorResponse.class);
-            oAuthLoginResult.setSuccess(false);
-            oAuthLoginResult.setError(error);
-            throw new RuntimeException("카카오 토큰 발급 실패: " + httpTokenResponse.body());
+        }catch (Exception e){
+            Log.error("[LoginProcess : kakao : Exception : {}]",e);
         }
 
         return oAuthLoginResult;
