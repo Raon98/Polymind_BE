@@ -1,4 +1,4 @@
-package com.polymind.dto.response.login.kakao;
+package com.polymind.dto.response.oauth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

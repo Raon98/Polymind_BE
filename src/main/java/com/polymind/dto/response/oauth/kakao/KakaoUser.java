@@ -1,4 +1,4 @@
-package com.polymind.dto.response.login.kakao;
+package com.polymind.dto.response.oauth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -8,7 +8,5 @@ public class KakaoUser {
     private Long id;
     @JsonProperty("connected_at")
     private String connectedAt;
-    @JsonProperty("kakao_account")
-    private KakaoAccount kakaoAccount;
     private KakaoProperties properties;
 }

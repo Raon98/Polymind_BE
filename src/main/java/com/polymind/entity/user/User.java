@@ -20,16 +20,16 @@ public class User {
     @Column(name = "user_email")
     private String email;
 
-    private String plat;
+    private String provider;
     @Column(name = "user_profile_image")
     private String profile_image;
 
     @Builder
-    public User(Long userId,String name, String email, String plat, String profile_image) {
+    public User(Long userId,String name, String email, String provider, String profile_image) {
         this.userId = userId;
         this.name = name;
         this.email = email;
-        this.plat = plat;
+        this.provider = provider;
         this.profile_image = profile_image;
     }
 }
