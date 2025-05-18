@@ -1,4 +1,4 @@
-package com.polymind.dto.response.login.kakao;
+package com.polymind.dto.response.oauth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -10,4 +10,6 @@ public class KakaoProfile {
     private String thumbnailImageUrl;
     @JsonProperty("profile_image_url")
     private String profileImageUrl;
+    private Boolean is_default_image;
+    private Boolean is_default_nickname;
 }

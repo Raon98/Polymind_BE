@@ -1,11 +1,12 @@
-package com.polymind.dto.response.login.kakao;
+package com.polymind.dto.response.oauth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class KakaoProperties {
-    private String nickname;
+    @JsonProperty("nickname")
+    private String name;
 
     @JsonProperty("profile_image")
     private String profileImage;

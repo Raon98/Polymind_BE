@@ -1,9 +1,9 @@
-package com.polymind.dto.response.login.kakao;
+package com.polymind.dto.response.oauth;
 
 import lombok.Data;
 
 @Data
-public class KakaoErrorResponse {
+public class OAuthErrorResponse {
     /*error*/
     private String error;
     private String error_description;
