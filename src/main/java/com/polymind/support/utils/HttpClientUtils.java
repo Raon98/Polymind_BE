@@ -28,6 +28,19 @@ public class HttpClientUtils {
         return httpClient.send(request,HttpResponse.BodyHandlers.ofString());
     }
 
+    /**
+     * @ x-www-form-urlencoded 방식 POST 요청
+     */
+    public static HttpResponse<String> sendAuthorization(String url, String accessToken) throws IOException, InterruptedException {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Authorization", "Bearer "+accessToken)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                .build();
+
+        return httpClient.send(request,HttpResponse.BodyHandlers.ofString());
+    }
 
     /**
      * @ 파라미터 URL 인코딩

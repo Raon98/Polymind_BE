@@ -1,7 +1,7 @@
 package com.polymind.support.response;
 
-import com.polymind.dto.response.login.KakaoErrorResponse;
-import com.polymind.dto.response.login.KakaoResponse;
+import com.polymind.dto.response.login.kakao.KakaoErrorResponse;
+import com.polymind.dto.response.login.kakao.KakaoResponse;
 import lombok.Data;
 
 @Data

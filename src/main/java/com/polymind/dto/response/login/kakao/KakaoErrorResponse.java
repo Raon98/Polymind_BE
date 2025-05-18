@@ -1,4 +1,4 @@
-package com.polymind.dto.response.login;
+package com.polymind.dto.response.login.kakao;
 
 import lombok.Data;
 
