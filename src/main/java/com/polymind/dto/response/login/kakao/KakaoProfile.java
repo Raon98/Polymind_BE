@@ -10,4 +10,6 @@ public class KakaoProfile {
     private String thumbnailImageUrl;
     @JsonProperty("profile_image_url")
     private String profileImageUrl;
+    private Boolean is_default_image;
+    private Boolean is_default_nickname;
 }
