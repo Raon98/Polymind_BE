@@ -31,7 +31,7 @@ public class KakaoLoginService {
      * @throws InterruptedException
      */
 
-    public KakaoResult getKakaoTokenLogin(KakaoRequest kakaoRequest) throws IOException, InterruptedException {
+    public KakaoResult kakaoLoginProcess(KakaoRequest kakaoRequest) throws IOException, InterruptedException {
         Log.info("[START] ::::::: [getKakaoTokenLogin]");
         String tokenUrl = kakaoAuthProperties.tokenUrl();
         String clientId = kakaoAuthProperties.clientId();
