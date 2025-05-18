@@ -4,6 +4,8 @@ import com.polymind.dto.request.login.KakaoRequest;
 import com.polymind.dto.response.login.kakao.KakaoErrorResponse;
 import com.polymind.dto.response.login.kakao.KakaoResponse;
 import com.polymind.dto.response.login.kakao.KakaoUser;
+import com.polymind.entity.user.User;
+import com.polymind.repository.user.UserRepository;
 import com.polymind.support.config.login.KakaoAuthProperties;
 import com.polymind.support.logging.Log;
 import com.polymind.support.response.KakaoResult;
@@ -20,6 +22,7 @@ import java.util.Map;
 @Service
 public class KakaoLoginService {
     private final KakaoAuthProperties kakaoAuthProperties;
+    private final UserRepository userRepository;
     /**
      * 카카오 토큰 발급
      * @param kakaoRequest
@@ -52,7 +55,11 @@ public class KakaoLoginService {
             Log.info("[getKakaoTokenLogin : httpUserResponse : {}]",httpUserResponse);
             if(httpUserResponse.statusCode() == 200){
                 KakaoUser userResponse = ObjectMapperUtils.readValue(httpUserResponse.body(),KakaoUser.class);
+                // User에게 토큰 반환
                 tokenResponse.setUser(userResponse);
+
+                // DB 저장
+                kakaoUserSave(userResponse);
             }else {
                 throw new RuntimeException("카카오 사용자 정보 조회 실패: " + httpUserResponse.body());
             }
@@ -66,5 +73,16 @@ public class KakaoLoginService {
         }
 
         return kakaoResult;
+    }
+
+    public User kakaoUserSave(KakaoUser kakaoUser){
+        User user = User.builder()
+                .userId(kakaoUser.getId())
+                .email("")
+                .name(kakaoUser.getProperties().getNickname())
+                .plat("kakao")
+                .profile_image(kakaoUser.getProperties().getProfileImage())
+                .build();
+        return userRepository.save(user);
     }
 }
