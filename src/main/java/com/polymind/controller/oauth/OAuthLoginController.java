@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/v1/api/oauth")
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class OAuthLoginController {
 
     private final OAuthLoginServiceFactory oAuthLoginServiceFactory;
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseEntity<?>> OAuthLoginProcess(@RequestBody OAuthLoginRequest request) throws IOException, InterruptedException {
+    public ResponseEntity<ApiResponseEntity<?>> OAuthLoginProcess(@RequestBody OAuthLoginRequest request){
 
         OAuthLoginService loginService = oAuthLoginServiceFactory.getService(request.getProvider());
         OAuthLoginResult result = loginService.LoginProcess(request);
