@@ -4,6 +4,7 @@ import com.polymind.dto.request.oauth2.OAuth2LoginRequest;
 import com.polymind.dto.response.oauth.OAuth2AccessTokenResponse;
 import com.polymind.dto.response.oauth.OAuth2ErrorResponse;
 import com.polymind.dto.response.oauth.OAuth2LoginResult;
+import com.polymind.dto.response.oauth.kakao.KakaoUser;
 import com.polymind.entity.user.User;
 import com.polymind.service.user.UserService;
 import com.polymind.support.config.oauth.kakao.KakaoAuthProperties;
@@ -61,9 +62,7 @@ public class KakaoLoginService implements OAuth2LoginService {
                     "code", authorizeCode
             );
 
-            Log.info("kakao Params {} ",params );
             HttpResponse<String> response = HttpClientUtils.sendPostForm(tokenUrl, params);
-            Log.info("kakao response {} ",response );
             if (response.statusCode() != 200) {
                 Log.info("[LoginProcess : kakao : 카카오 로그인 TOKEN 발급실패 : {}]",response);
                 throw new OAuth2LoginException(
@@ -104,7 +103,16 @@ public class KakaoLoginService implements OAuth2LoginService {
                                 .build()
                 );
             }
-            return ObjectMapperUtils.readValue(httpUserResponse.body(),User.class);
+            Log.info("kakao response {} ",httpUserResponse.body() );
+
+            KakaoUser kakaoUser = ObjectMapperUtils.readValue(httpUserResponse.body(),KakaoUser.class);
+
+            return User.builder()
+                    .userId(kakaoUser.getId())
+                    .email("")
+                    .name(kakaoUser.getProperties().getName())
+                    .profile_image(kakaoUser.getProperties().getProfileImage())
+                    .build();
         } catch (IOException | InterruptedException e) {
             throw new OAuth2LoginException(
                     OAuth2ErrorResponse.builder()
