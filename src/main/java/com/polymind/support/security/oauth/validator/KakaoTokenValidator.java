@@ -1,5 +1,6 @@
 package com.polymind.support.security.oauth.validator;
 
+import com.polymind.support.config.oauth.kakao.KakaoAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,9 +14,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class KakaoTokenValidator implements OAuthTokenValidator{
+public class KakaoTokenValidator implements OAuth2TokenValidator {
 
     private final RestTemplate restTemplate;
+    private final KakaoAuthProvider kakaoAuthProvider;
 
     @Override
     public boolean supports(String token) {
@@ -29,7 +31,7 @@ public class KakaoTokenValidator implements OAuthTokenValidator{
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try{
-            ResponseEntity<String> response = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET, entity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(kakaoAuthProvider.userInfoUrl(), HttpMethod.GET, entity, String.class);
             return response.getStatusCode().is2xxSuccessful();
         }catch(HttpClientErrorException e){
             return false;

@@ -1,6 +1,6 @@
 package com.polymind.support.config;
 
-import com.polymind.support.config.login.CorsProperties;
+import com.polymind.support.config.cors.CorsProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

@@ -1,6 +1,6 @@
 package com.polymind.support.config;
 
-import com.polymind.support.filter.OAuthTokenFilter;
+import com.polymind.support.filter.OAuth2TokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final OAuthTokenFilter oAuthTokenFilter;
+    private final OAuth2TokenFilter oAuth2TokenFilter;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,11 +28,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/status", "/images/**", "/error/**", "/favicon.ico","/v1/api/oauth/**"
+                                "/", "/error/**","/v1/api/oauth/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(oAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(oAuth2TokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

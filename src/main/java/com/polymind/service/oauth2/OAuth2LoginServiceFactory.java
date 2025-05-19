@@ -1,4 +1,4 @@
-package com.polymind.service.oauth;
+package com.polymind.service.oauth2;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -7,11 +7,11 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class OAuthLoginServiceFactory {
+public class OAuth2LoginServiceFactory {
 
-    private final Map<String,OAuthLoginService> services;
+    private final Map<String, OAuth2LoginService> services;
 
-    public OAuthLoginService getService(String provider) {
+    public OAuth2LoginService getService(String provider) {
         return services.get(provider.toLowerCase());
     }
 }
