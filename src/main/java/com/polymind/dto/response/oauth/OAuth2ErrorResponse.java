@@ -1,11 +1,15 @@
 package com.polymind.dto.response.oauth;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class OAuthErrorResponse {
+@Builder
+@AllArgsConstructor
+public class OAuth2ErrorResponse {
     /*error*/
     private String error;
     private String error_description;
-    private String error_code;
+    private int error_code;
 }

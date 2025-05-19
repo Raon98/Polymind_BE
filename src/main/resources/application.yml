@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: polymind_backend
+  docker:
+    compose:
+      enabled: false
+  devtools:
+    restart:
+      enabled: false
+
+  datasource:
+    url: jdbc:postgresql://aws-0-ap-northeast-2.pooler.supabase.com:5432/postgres?user=postgres.oretxosgyqufuybvymdn&password=poly1473!
+    username: postgres
+    password: poly1473!
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+
+oauth2:
+  client:
+    registration:
+      kakao:
+        client-id: 49cfaf6184aed628e7cdc02f0ed87419
+        redirect-uri: http://localhost:3000/login
+      google:
+        client-id: ${GOOGLE_CLIENT_ID}
+        client-secret: ${GOOGLE_CLIENT_SECRET}
+        redirect-uri: http://localhost:3000/login
+    provider:
+      kakao:
+        user-info-url : https://kapi.kakao.com/v2/user/me
+        authorization-url: https://kauth.kakao.com/oauth/authorize
+        token-url: https://kauth.kakao.com/oauth/token
+      google:
+        authorization-url: https://accounts.google.com/o/oauth2/v2/auth
+        token-url: https://oauth2.googleapis.com/token
+        user-info-url: https://www.googleapis.com/oauth2/v3/userinfo
+
+cors:
+  allow-credentials: true
+  allowed-origins: http://localhost:3000
+  allowed-methods: GET,POST,PUT,DELETE
+  allowed-headers: "*"

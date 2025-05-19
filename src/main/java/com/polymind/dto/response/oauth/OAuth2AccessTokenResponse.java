@@ -1,9 +1,11 @@
 package com.polymind.dto.response.oauth;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
-public class TokenResponse {
+public class OAuth2AccessTokenResponse  {
     private String token_type;
     private String access_token;
     private int expires_in;

@@ -1,4 +1,4 @@
-package com.polymind.support.config.login;
+package com.polymind.support.config.cors;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
