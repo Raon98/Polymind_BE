@@ -7,7 +7,7 @@ import com.polymind.dto.response.oauth.OAuth2LoginResult;
 import com.polymind.dto.response.oauth.kakao.KakaoUser;
 import com.polymind.entity.user.User;
 import com.polymind.service.user.UserService;
-import com.polymind.support.config.oauth.kakao.KakaoAuthProperties;
+import com.polymind.support.config.oauth.kakao.KakaoAuthRegistration;
 import com.polymind.support.config.oauth.kakao.KakaoAuthProvider;
 import com.polymind.support.exception.OAuth2LoginException;
 import com.polymind.support.logging.Log;
@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service(value = "kakao")
 public class KakaoLoginService implements OAuth2LoginService {
-    private final KakaoAuthProperties kakaoAuthProperties;
+    private final KakaoAuthRegistration kakaoAuthRegistration;
     private final KakaoAuthProvider kakaoAuthProvider;
     private final UserService userService;
 
@@ -51,8 +51,8 @@ public class KakaoLoginService implements OAuth2LoginService {
     public OAuth2AccessTokenResponse getToken(String code) {
         try {
             String tokenUrl = kakaoAuthProvider.tokenUrl();
-            String clientId = kakaoAuthProperties.clientId();
-            String redirectUri = kakaoAuthProperties.redirectUri();
+            String clientId = kakaoAuthRegistration.clientId();
+            String redirectUri = kakaoAuthRegistration.redirectUri();
             String authorizeCode = code;
 
             Map<String,String> params = Map.of(

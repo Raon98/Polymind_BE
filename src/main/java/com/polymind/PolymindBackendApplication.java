@@ -4,8 +4,10 @@ import com.polymind.support.logging.Log;
 import jakarta.annotation.PreDestroy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan(basePackages = "com.polymind.support.config")
 public class PolymindBackendApplication {
 
     @PreDestroy
