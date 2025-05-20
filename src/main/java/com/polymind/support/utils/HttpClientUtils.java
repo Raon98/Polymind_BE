@@ -29,7 +29,7 @@ public class HttpClientUtils {
     }
 
     /**
-     * @ x-www-form-urlencoded 방식 POST 요청
+     * @ aythorization Get 호출
      */
     public static HttpResponse<String> sendAuthorization(String url, String accessToken) throws IOException, InterruptedException {
 

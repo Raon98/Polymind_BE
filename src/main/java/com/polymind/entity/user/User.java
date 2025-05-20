@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Column(name = "user_name")
     private String name;
@@ -25,7 +25,7 @@ public class User {
     private String profile_image;
 
     @Builder
-    public User(Long userId,String name, String email, String provider, String profile_image) {
+    public User(String userId,String name, String email, String provider, String profile_image) {
         this.userId = userId;
         this.name = name;
         this.email = email;
