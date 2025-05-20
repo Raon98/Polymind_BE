@@ -4,11 +4,14 @@ import com.polymind.dto.request.oauth2.OAuth2LoginRequest;
 import com.polymind.dto.response.oauth.OAuth2AccessTokenResponse;
 import com.polymind.dto.response.oauth.OAuth2ErrorResponse;
 import com.polymind.dto.response.oauth.OAuth2LoginResult;
+import com.polymind.dto.response.oauth.google.GoogleUser;
 import com.polymind.dto.response.oauth.kakao.KakaoUser;
 import com.polymind.entity.user.User;
 import com.polymind.service.user.UserService;
-import com.polymind.support.config.oauth.kakao.KakaoAuthRegistration;
+import com.polymind.support.config.oauth.google.GoogleAuthProvider;
+import com.polymind.support.config.oauth.google.GoogleAuthRegistration;
 import com.polymind.support.config.oauth.kakao.KakaoAuthProvider;
+import com.polymind.support.config.oauth.kakao.KakaoAuthRegistration;
 import com.polymind.support.exception.OAuth2LoginException;
 import com.polymind.support.logging.Log;
 import com.polymind.support.utils.HttpClientUtils;
@@ -23,10 +26,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@Service(value = "kakao")
-public class KakaoLoginService implements OAuth2LoginService {
-    private final KakaoAuthRegistration kakaoAuthRegistration;
-    private final KakaoAuthProvider kakaoAuthProvider;
+@Service(value = "google")
+public class GoogleLoginService implements OAuth2LoginService {
+    private final GoogleAuthRegistration googleAuthRegistration;
+    private final GoogleAuthProvider googleAuthProvider;
     private final UserService userService;
 
     /**
@@ -37,14 +40,14 @@ public class KakaoLoginService implements OAuth2LoginService {
 
     @Override
     public OAuth2LoginResult LoginProcess(OAuth2LoginRequest request) {
-        Log.info("[START] ::::::: [LoginProcess : kakao]");
+        Log.info("[START] ::::::: [LoginProcess : Google]");
 
         //1. token 조회
         OAuth2AccessTokenResponse token = getToken(request.getCode());
         //2. User정보 조회
         User user = getUserInfo(token.getAccess_token());
         //3. user정보 저장
-        userService.saveIfNotExists(user.getUserId(), "", user.getName(), "kakao", user.getProfile_image());
+        userService.saveIfNotExists(user.getUserId().toString(), user.getEmail(), user.getName(), "google", user.getProfile_image());
         //4. 사용자 리턴
         return OAuth2LoginResult.success(user,token);
     }
@@ -52,25 +55,30 @@ public class KakaoLoginService implements OAuth2LoginService {
     @Override
     public OAuth2AccessTokenResponse getToken(String code) {
         try {
-            String tokenUrl = kakaoAuthProvider.tokenUrl();
-            String clientId = kakaoAuthRegistration.clientId();
-            String redirectUri = kakaoAuthRegistration.redirectUri();
-            String authorizeCode = URLDecoder.decode(code, StandardCharsets.UTF_8);
+            String tokenUrl = googleAuthProvider.tokenUrl();
+            String clientId = googleAuthRegistration.clientId();
+            String clientSecret = googleAuthRegistration.clientSecret();
+            String redirectUri = googleAuthRegistration.redirectUri();
+            String authorizeCode = URLDecoder.decode(code, StandardCharsets.UTF_8);;
 
             Map<String,String> params = Map.of(
                     "grant_type", "authorization_code",
                     "client_id", clientId,
+                    "client_secret",clientSecret,
                     "redirect_uri", redirectUri,
                     "code", authorizeCode
             );
+            Log.info("[LoginProcess : Google : 구글 로그인 params 확인 : {}]",params);
 
             HttpResponse<String> response = HttpClientUtils.sendPostForm(tokenUrl, params);
+
+            Log.info("[LoginProcess : Google : 구글 로그인 response 확인 : {}]",response.body());
             if (response.statusCode() != 200) {
-                Log.info("[LoginProcess : kakao : 카카오 로그인 TOKEN 발급실패 : {}]",response);
+                Log.info("[LoginProcess : Google : 구글 로그인 TOKEN 발급실패 : {}]",response);
                 throw new OAuth2LoginException(
                         OAuth2ErrorResponse.builder()
-                                .error("kakao_token_error_001" )
-                                .error_description("카카오 토큰 발급 실패")
+                                .error("google_token_error_001" )
+                                .error_description("구글 토큰 발급 실패")
                                 .error_code(response.statusCode())
                                 .build()
                 );
@@ -92,34 +100,34 @@ public class KakaoLoginService implements OAuth2LoginService {
     @Override
     public User getUserInfo(String accessToken) {
         try {
-            String userUrl = kakaoAuthProvider.userInfoUrl();
+            String userUrl = googleAuthProvider.userInfoUrl();
             HttpResponse<String> httpUserResponse = HttpClientUtils.sendAuthorization(userUrl,accessToken);
 
             if (httpUserResponse.statusCode() != 200) {
-                Log.error("[LoginProcess : kakao : 카카오 유저정보 조회실패 : {}]",httpUserResponse);
+                Log.error("[LoginProcess : Google : 구글 유저정보 조회실패 : {}]",httpUserResponse);
                 throw new OAuth2LoginException(
                         OAuth2ErrorResponse.builder()
-                                .error("kakao_userInfo_error_001")
-                                .error_description("카카오 유저정보 조회실패 ")
+                                .error("google_userInfo_error_001")
+                                .error_description("구글 유저정보 조회실패 ")
                                 .error_code(httpUserResponse.statusCode())
                                 .build()
                 );
             }
-            Log.info("kakao response {} ",httpUserResponse.body() );
+            Log.info("google response {} ",httpUserResponse.body() );
 
-            KakaoUser kakaoUser = ObjectMapperUtils.readValue(httpUserResponse.body(),KakaoUser.class);
+            GoogleUser googleUser = ObjectMapperUtils.readValue(httpUserResponse.body(), GoogleUser.class);
 
             return User.builder()
-                    .userId(kakaoUser.getId().toString())
-                    .email("")
-                    .name(kakaoUser.getProperties().getName())
-                    .profile_image(kakaoUser.getProperties().getProfileImage())
+                    .userId(googleUser.getId())
+                    .email(googleUser.getEmail())
+                    .name(googleUser.getName())
+                    .profile_image(googleUser.getPicture())
                     .build();
         } catch (IOException | InterruptedException e) {
             throw new OAuth2LoginException(
                     OAuth2ErrorResponse.builder()
-                            .error("kakao_userInfo_error_002 : "+e)
-                            .error_description("카카오 유저정보 조회중 IO 통신오류 실패")
+                            .error("google_userInfo_error_002 : "+e)
+                            .error_description("구글 유저정보 조회중 IO 통신오류 실패")
                             .error_code(500)
                             .build()
             );

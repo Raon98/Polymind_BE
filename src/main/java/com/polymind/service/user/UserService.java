@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
 
-    public User saveIfNotExists(Long id, String email, String name,String provider,String profileImage) {
+    public User saveIfNotExists(String id, String email, String name,String provider,String profileImage) {
 
         return userRepository.findById(id).orElseGet(() -> {
             User user = new User(id, name,email,provider,profileImage);

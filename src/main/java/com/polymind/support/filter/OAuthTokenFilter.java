@@ -1,6 +1,6 @@
 package com.polymind.support.filter;
 
-import com.polymind.support.security.oauth.validator.OAuthTokenValidator;
+import com.polymind.support.security.oauth.validator.OAuth2TokenValidator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OAuthTokenFilter extends GenericFilterBean {
 
-    private final List<OAuthTokenValidator> validators;
+    private final List<OAuth2TokenValidator> validators;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -29,7 +29,7 @@ public class OAuthTokenFilter extends GenericFilterBean {
         if(authHeader !=null && authHeader.startsWith("Bearer ")){
             String token = authHeader.substring(7);
 
-            for(OAuthTokenValidator validator : validators){
+            for(OAuth2TokenValidator validator : validators){
                 if(validator.supports(token) && validator.validate(token)){
                     Authentication auth = validator.getAuthentication(token);
                     SecurityContextHolder.getContext().setAuthentication(auth);
