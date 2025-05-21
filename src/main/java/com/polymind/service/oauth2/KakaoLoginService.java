@@ -1,6 +1,8 @@
 package com.polymind.service.oauth2;
 
+import com.polymind.dto.request.jwt.JwtUserDto;
 import com.polymind.dto.request.oauth2.OAuth2LoginRequest;
+import com.polymind.dto.response.jwt.JwtDto;
 import com.polymind.dto.response.oauth.OAuth2AccessTokenResponse;
 import com.polymind.dto.response.oauth.OAuth2ErrorResponse;
 import com.polymind.dto.response.oauth.OAuth2LoginResult;
@@ -12,6 +14,7 @@ import com.polymind.support.config.oauth.kakao.KakaoAuthProvider;
 import com.polymind.support.exception.OAuth2LoginException;
 import com.polymind.support.logging.Log;
 import com.polymind.support.utils.HttpClientUtils;
+import com.polymind.support.utils.JwtUtils;
 import com.polymind.support.utils.ObjectMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class KakaoLoginService implements OAuth2LoginService {
     private final KakaoAuthRegistration kakaoAuthRegistration;
     private final KakaoAuthProvider kakaoAuthProvider;
     private final UserService userService;
+    private final JwtUtils jwtUtils;
 
     /**
      * 카카오 토큰 발급
@@ -45,8 +49,17 @@ public class KakaoLoginService implements OAuth2LoginService {
         User user = getUserInfo(token.getAccess_token());
         //3. user정보 저장
         userService.saveIfNotExists(user.getUserId(), "", user.getName(), "kakao", user.getProfile_image());
-        //4. 사용자 리턴
-        return OAuth2LoginResult.success(user,token);
+
+        //4. JwtToken 발급
+        JwtUserDto jwtUser = JwtUserDto.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .role("USER")
+                .provider(user.getProvider())
+                .build();
+        JwtDto jwtToken = jwtUtils.generateToken(jwtUser);
+
+        return OAuth2LoginResult.success(user,jwtToken);
     }
 
     @Override
