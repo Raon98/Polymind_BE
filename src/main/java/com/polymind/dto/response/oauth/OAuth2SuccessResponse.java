@@ -1,5 +1,6 @@
 package com.polymind.dto.response.oauth;
 
+import com.polymind.dto.response.jwt.JwtDto;
 import com.polymind.entity.user.User;
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +12,5 @@ import lombok.experimental.SuperBuilder;
 @Builder
 public class OAuth2SuccessResponse  {
     private User user;
-    private OAuth2AccessTokenResponse tokenResponse;
+    private JwtDto tokenResponse;
 }

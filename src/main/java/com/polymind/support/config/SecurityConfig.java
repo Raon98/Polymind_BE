@@ -1,7 +1,9 @@
 package com.polymind.support.config;
 
-import com.polymind.support.filter.OAuth2TokenFilter;
+import com.polymind.support.filter.jwt.JwtAuthenticationFilter;
+import com.polymind.support.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -17,8 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final OAuth2TokenFilter oAuth2TokenFilter;
-
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,11 +29,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/error/**","/v1/api/oauth/**"
+                                "/", "/error/**","/v1/api/oauth/login"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(oAuth2TokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

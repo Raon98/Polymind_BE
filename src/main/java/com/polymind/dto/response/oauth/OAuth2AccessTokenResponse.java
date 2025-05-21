@@ -1,9 +1,7 @@
 package com.polymind.dto.response.oauth;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(callSuper = false)
 @Data
 public class OAuth2AccessTokenResponse  {
     private String token_type;

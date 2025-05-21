@@ -24,6 +24,10 @@ public class User {
     @Column(name = "user_profile_image")
     private String profile_image;
 
+    @Column(name = "role")
+    private String role;
+
+
     @Builder
     public User(String userId,String name, String email, String provider, String profile_image) {
         this.userId = userId;
@@ -31,5 +35,16 @@ public class User {
         this.email = email;
         this.provider = provider;
         this.profile_image = profile_image;
+        this.role = "USER";
+    }
+
+    @Builder
+    public User(String userId,String name, String email, String provider, String profile_image,String role) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.provider = provider;
+        this.profile_image = profile_image;
+        this.role = role;
     }
 }
