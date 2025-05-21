@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 
 @Configurable
-public class RestTemplate {
+public class TemplateConfig {
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    public TemplateConfig restTemplate() {
+        return new TemplateConfig();
     }
 }

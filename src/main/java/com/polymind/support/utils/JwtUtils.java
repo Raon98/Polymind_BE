@@ -40,6 +40,7 @@ public class JwtUtils {
 
         Date refreshTokenExpiration = new Date(now + 1000L * 60 * 60 * 24 * 7);
         String refreshToken = Jwts.builder()
+                .setSubject(user.getUserId())
                 .setExpiration(refreshTokenExpiration)
                 .signWith(key)
                 .compact();
