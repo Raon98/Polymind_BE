@@ -49,6 +49,8 @@ oauth2:
         user-info-url: https://www.googleapis.com/oauth2/v3/userinfo
 jwt:
   secretKey : ${SECRET_KEY}
+gpt:
+  secretKey : ${GPT_SECRET_KEY}
 cors:
   allow-credentials: true
   allowed-origins: http://localhost:3000
