@@ -8,14 +8,14 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan(basePackages = "com.tellin.support.config")
-public class PolymindBackendApplication {
+public class TellInBackendApplication {
 
     @PreDestroy
     public void destroy() {
         Log.info("[\uD83D\uDED1  기존 커넥션 정리 시작]");
     }
     public static void main(String[] args) {
-        SpringApplication.run(PolymindBackendApplication.class, args);
+        SpringApplication.run(TellInBackendApplication.class, args);
     }
 
 }
