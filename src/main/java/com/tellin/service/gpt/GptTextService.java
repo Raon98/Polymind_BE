@@ -50,7 +50,7 @@ public class GptTextService {
             throw new ErrorException(
                     ErrorResponse.builder()
                             .error("gpt_text_error_001" )
-                            .error_description("구글 토큰 발급 실패")
+                            .error_description("서비스 이용이 불가능합니다.")
                             .error_code(e.statusCode)
                             .build()
             );
