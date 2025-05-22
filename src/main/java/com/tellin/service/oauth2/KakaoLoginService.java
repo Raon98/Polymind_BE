@@ -4,14 +4,14 @@ import com.tellin.dto.request.jwt.JwtUserDto;
 import com.tellin.dto.request.oauth2.OAuth2LoginRequest;
 import com.tellin.dto.response.jwt.JwtDto;
 import com.tellin.dto.response.oauth.OAuth2AccessTokenResponse;
-import com.tellin.dto.response.oauth.OAuth2ErrorResponse;
+import com.tellin.support.exception.ErrorResponse;
 import com.tellin.dto.response.oauth.OAuth2LoginResult;
 import com.tellin.dto.response.oauth.kakao.KakaoUser;
 import com.tellin.entity.user.User;
 import com.tellin.service.user.UserService;
 import com.tellin.support.config.oauth.kakao.KakaoAuthRegistration;
 import com.tellin.support.config.oauth.kakao.KakaoAuthProvider;
-import com.tellin.support.exception.OAuth2LoginException;
+import com.tellin.support.exception.ErrorException;
 import com.tellin.support.logging.Log;
 import com.tellin.support.utils.HttpClientUtils;
 import com.tellin.support.utils.JwtUtils;
@@ -80,8 +80,8 @@ public class KakaoLoginService implements OAuth2LoginService {
             HttpResponse<String> response = HttpClientUtils.sendPostForm(tokenUrl, params);
             if (response.statusCode() != 200) {
                 Log.info("[LoginProcess : kakao : 카카오 로그인 TOKEN 발급실패 : {}]",response);
-                throw new OAuth2LoginException(
-                        OAuth2ErrorResponse.builder()
+                throw new ErrorException(
+                        ErrorResponse.builder()
                                 .error("kakao_token_error_001" )
                                 .error_description("카카오 토큰 발급 실패")
                                 .error_code(response.statusCode())
@@ -91,8 +91,8 @@ public class KakaoLoginService implements OAuth2LoginService {
             return ObjectMapperUtils.readValue(response.body(), OAuth2AccessTokenResponse.class);
         } catch (IOException | InterruptedException e) {
             Log.info("[LoginProcess : kakao : 카카오 로그인 TOKEN 발급실패 : {}]",e);
-            throw new OAuth2LoginException(
-                    OAuth2ErrorResponse.builder()
+            throw new ErrorException(
+                    ErrorResponse.builder()
                             .error("kakao_token_error : "+e)
                             .error_description("카카오 토큰 발급중 IO 통신오류 실패")
                             .error_code(500)
@@ -110,8 +110,8 @@ public class KakaoLoginService implements OAuth2LoginService {
 
             if (httpUserResponse.statusCode() != 200) {
                 Log.error("[LoginProcess : kakao : 카카오 유저정보 조회실패 : {}]",httpUserResponse);
-                throw new OAuth2LoginException(
-                        OAuth2ErrorResponse.builder()
+                throw new ErrorException(
+                        ErrorResponse.builder()
                                 .error("kakao_userInfo_error_001")
                                 .error_description("카카오 유저정보 조회실패 ")
                                 .error_code(httpUserResponse.statusCode())
@@ -129,8 +129,8 @@ public class KakaoLoginService implements OAuth2LoginService {
                     .profile_image(kakaoUser.getProperties().getProfileImage())
                     .build();
         } catch (IOException | InterruptedException e) {
-            throw new OAuth2LoginException(
-                    OAuth2ErrorResponse.builder()
+            throw new ErrorException(
+                    ErrorResponse.builder()
                             .error("kakao_userInfo_error_002 : "+e)
                             .error_description("카카오 유저정보 조회중 IO 통신오류 실패")
                             .error_code(500)

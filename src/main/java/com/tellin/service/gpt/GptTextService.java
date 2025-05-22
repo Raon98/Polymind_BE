@@ -3,7 +3,10 @@ package com.tellin.service.gpt;
 import com.tellin.dto.request.gpt.GptKeywordRequest;
 import com.tellin.dto.request.gpt.GptPromptTemplate;
 import com.tellin.support.config.gpt.GptProperties;
+import com.tellin.support.exception.ErrorException;
+import com.tellin.support.exception.ErrorResponse;
 import com.tellin.support.logging.Log;
+import com.theokanning.openai.OpenAiHttpException;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.service.OpenAiService;
 import jakarta.annotation.PostConstruct;
@@ -35,11 +38,22 @@ public class GptTextService {
                 .maxTokens(500)
                 .build();
 
-        String response = openAiService.createCompletion(completionRequest).getChoices().get(0).getText().trim();
-        Log.info("[GenerateByKeyword : response >>>> {}]",response);
+        try {
+            String response = openAiService.createCompletion(completionRequest)
+                    .getChoices().get(0).getText().trim();
 
-        return response;
+            Log.info("[GenerateByKeyword : response >>>> {}]", response);
+            return response;
+
+        } catch (OpenAiHttpException e) {
+            Log.error("[GPT API Error] Status: {}, Message: {}", e.statusCode, e.getMessage());
+            throw new ErrorException(
+                    ErrorResponse.builder()
+                            .error("gpt_text_error_001" )
+                            .error_description("구글 토큰 발급 실패")
+                            .error_code(e.statusCode)
+                            .build()
+            );
+        }
     }
-
-
 }

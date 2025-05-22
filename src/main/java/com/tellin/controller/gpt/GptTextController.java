@@ -23,7 +23,7 @@ public class GptTextController {
 
         return ResponseEntity.ok(
                 ApiResponseEntity.builder()
-                .data("generateByKeyword")
+                .data(gptText)
                 .build());
     }
 }

@@ -11,8 +11,8 @@ import java.io.IOException;
 @ControllerAdvice
 public class GlobalException {
 
-    @ExceptionHandler(OAuth2LoginException.class)
-    public ResponseEntity<ApiResponseEntity<?>> handleOAuth2Exception(OAuth2LoginException ex) {
+    @ExceptionHandler(ErrorException.class)
+    public ResponseEntity<ApiResponseEntity<?>> handleOAuth2Exception(ErrorException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponseEntity.builder()
                         .data(ex.getError())

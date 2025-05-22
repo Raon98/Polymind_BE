@@ -1,4 +1,4 @@
-package com.tellin.dto.response.oauth;
+package com.tellin.support.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class OAuth2ErrorResponse {
+public class ErrorResponse {
     /*error*/
     private String error;
     private String error_description;
