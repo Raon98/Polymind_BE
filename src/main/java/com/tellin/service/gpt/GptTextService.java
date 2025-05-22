@@ -1,11 +1,14 @@
 package com.tellin.service.gpt;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.tellin.dto.request.gpt.GptKeywordRequest;
 import com.tellin.dto.request.gpt.GptPromptTemplate;
+import com.tellin.dto.response.gpt.GptSentenceResponse;
 import com.tellin.support.config.gpt.GptProperties;
 import com.tellin.support.exception.ErrorException;
 import com.tellin.support.exception.ErrorResponse;
 import com.tellin.support.logging.Log;
+import com.tellin.support.utils.ObjectMapperUtils;
 import com.theokanning.openai.OpenAiHttpException;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -28,7 +31,7 @@ public class GptTextService {
        this.openAiService = new OpenAiService(gptProperties.secretKey());
     }
 
-    public String GenerateByKeyword(GptKeywordRequest keywordRequest) {
+    public List<GptSentenceResponse> GenerateByKeyword(GptKeywordRequest keywordRequest) {
         Log.info("[START] ::::::: [GenerateByKeyword]");
 
         String prompt = GptPromptTemplate.CHUNK_ANALYSIS_PROMPT.formatted(keywordRequest.getStyle(),keywordRequest.getLevel(),keywordRequest.getTopic());
@@ -47,9 +50,13 @@ public class GptTextService {
         try {
             String response = openAiService.createChatCompletion(completionRequest)
                     .getChoices().get(0).getMessage().getContent().trim();
-
             Log.info("[GenerateByKeyword : response >>>> {}]", response);
-            return response;
+
+            List<GptSentenceResponse> sentenceResponseList = ObjectMapperUtils.readValueToList(response, new TypeReference<List<GptSentenceResponse>>() {});
+
+
+
+            return sentenceResponseList;
 
         } catch (OpenAiHttpException e) {
             Log.error("[GPT API Error] Status: {}, Message: {}", e.statusCode, e.getMessage());

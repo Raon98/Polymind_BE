@@ -1,8 +1,11 @@
 package com.tellin.support.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.List;
 
 public class ObjectMapperUtils {
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -23,6 +26,14 @@ public class ObjectMapperUtils {
         try {
             return mapper.readValue(json, clazz); // ✅ 정석
         } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 파싱 실패", e);
+        }
+    }
+
+    public static <T> List<T> readValueToList(String json, TypeReference<List<T>> typeReference) {
+        try {
+            return mapper.readValue(json, typeReference);
+        } catch (Exception e) {
             throw new RuntimeException("JSON 파싱 실패", e);
         }
     }
