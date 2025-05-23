@@ -1,17 +1,23 @@
 package com.tellin.service.gpt;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.tellin.dto.request.gpt.GptKeywordRequest;
 import com.tellin.dto.request.gpt.GptPromptTemplate;
+import com.tellin.dto.response.gpt.GptSentenceResponse;
 import com.tellin.support.config.gpt.GptProperties;
 import com.tellin.support.exception.ErrorException;
 import com.tellin.support.exception.ErrorResponse;
 import com.tellin.support.logging.Log;
+import com.tellin.support.utils.ObjectMapperUtils;
 import com.theokanning.openai.OpenAiHttpException;
-import com.theokanning.openai.completion.CompletionRequest;
+import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,25 +31,32 @@ public class GptTextService {
        this.openAiService = new OpenAiService(gptProperties.secretKey());
     }
 
-    public String GenerateByKeyword(GptKeywordRequest keywordRequest) {
+    public List<GptSentenceResponse> GenerateByKeyword(GptKeywordRequest keywordRequest) {
         Log.info("[START] ::::::: [GenerateByKeyword]");
 
         String prompt = GptPromptTemplate.CHUNK_ANALYSIS_PROMPT.formatted(keywordRequest.getStyle(),keywordRequest.getLevel(),keywordRequest.getTopic());
-
+        List<ChatMessage> messages = List.of(
+                new ChatMessage("system", GptPromptTemplate.SYSTEM_PROMPT),
+                new ChatMessage("user", prompt)
+        );
         Log.info("[GenerateByKeyword : prompt >>>> {}]",prompt);
-        CompletionRequest completionRequest = CompletionRequest.builder()
+        ChatCompletionRequest completionRequest = ChatCompletionRequest.builder()
                 .model("gpt-3.5-turbo")
-                .prompt(prompt)
+                .messages(messages)
                 .temperature(0.7)
-                .maxTokens(500)
+                .maxTokens(3000)
                 .build();
 
         try {
-            String response = openAiService.createCompletion(completionRequest)
-                    .getChoices().get(0).getText().trim();
-
+            String response = openAiService.createChatCompletion(completionRequest)
+                    .getChoices().get(0).getMessage().getContent().trim();
             Log.info("[GenerateByKeyword : response >>>> {}]", response);
-            return response;
+
+            List<GptSentenceResponse> sentenceResponseList = ObjectMapperUtils.readValueToList(response, new TypeReference<List<GptSentenceResponse>>() {});
+
+
+
+            return sentenceResponseList;
 
         } catch (OpenAiHttpException e) {
             Log.error("[GPT API Error] Status: {}, Message: {}", e.statusCode, e.getMessage());
