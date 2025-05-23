@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/error/**","/v1/api/oauth/login"
+                                "/", "/error/**","/v1/api/oauth/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
