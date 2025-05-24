@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,8 +32,6 @@ public class GptStoryFacadeService {
                 keywordRequest.getLevel(),
                 keywordRequest.getTopic()
         );
-        List<GptSentenceResponse> result = new ArrayList<>();
-
         return gptGeneratedStoryQueryRepository.findUnseenStory(gptStoryKey)
                 .map(story -> ObjectMapperUtils.readValueToList(
                         story.getContent(), new TypeReference<List<GptSentenceResponse>>() {}
