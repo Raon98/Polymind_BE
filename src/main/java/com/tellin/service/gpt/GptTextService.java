@@ -54,8 +54,6 @@ public class GptTextService {
 
             List<GptSentenceResponse> sentenceResponseList = ObjectMapperUtils.readValueToList(response, new TypeReference<List<GptSentenceResponse>>() {});
 
-
-
             return sentenceResponseList;
 
         } catch (OpenAiHttpException e) {

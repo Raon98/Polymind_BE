@@ -2,7 +2,7 @@ package com.tellin.controller.gpt;
 
 import com.tellin.dto.request.gpt.GptKeywordRequest;
 import com.tellin.dto.response.gpt.GptSentenceResponse;
-import com.tellin.service.gpt.GptTextService;
+import com.tellin.service.gpt.GptStoryFacadeService;
 import com.tellin.support.response.ApiResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GptTextController {
 
-    private final GptTextService gptTextService;
+    private final GptStoryFacadeService gptStoryFacadeService;
     @PostMapping("/generate")
     public ResponseEntity<ApiResponseEntity<?>> GenerateByKeyword(@RequestBody GptKeywordRequest request){
 
-        List<GptSentenceResponse> sentenceResponseList = gptTextService.GenerateByKeyword(request);
+        List<GptSentenceResponse> sentenceResponseList = gptStoryFacadeService.getOrGenerateStory(request);
 
         return ResponseEntity.ok(
                 ApiResponseEntity.builder()
