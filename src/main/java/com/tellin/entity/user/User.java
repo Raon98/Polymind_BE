@@ -1,6 +1,10 @@
 package com.tellin.entity.user;
 
-import jakarta.persistence.*;
+import com.tellin.support.entity.BaseTimeEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Table(name = "user_info")
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @Column(name = "user_id")
     private String userId;
